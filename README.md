@@ -60,7 +60,7 @@ npm run start
 yarn start
 You can also see a live version deployed on Vercel at:
 
-Vercel URL: https://frontend-assesstment-phi.vercel.app/
+Vercel URL: https://frontend-task-nkwa.vercel.app/
 Want to Contribute?
 Contributions are welcome! If you'd like to add features, fix bugs, or improve the dashboard, here's how:
 
