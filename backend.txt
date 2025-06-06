@@ -1,0 +1,165 @@
+// src/main.ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  // Enable CORS for your frontend application
+  app.enableCors({
+    origin: 'http://localhost:3000', // Replace with your Next.js frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+  await app.listen(3001); // Backend will run on port 3001
+  console.log('NestJS backend running on http://localhost:3001');
+}
+bootstrap();
+
+// src/app.module.ts
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { DashboardModule } from './dashboard/dashboard.module'; // Import the new module
+
+@Module({
+  imports: [DashboardModule], // Add DashboardModule to imports
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+// src/app.controller.ts
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}
+
+// src/app.service.ts
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AppService {
+  getHello(): string {
+    return 'Hello from NestJS Backend!';
+  }
+}
+
+// src/dashboard/interfaces/dashboard.interface.ts
+// This file defines the TypeScript interfaces for your data models.
+import { ReactNode } from 'react'; // ReactNode is needed for icons if you were to pass them directly
+
+export interface StakingAsset {
+  id: number;
+  name: string;
+  // For backend, we'll represent icons as strings (e.g., Lucide icon names)
+  // The frontend will then map these strings to actual Lucide React components.
+  iconName: string;
+  iconColor: string; // To store the color of the icon
+  rewardRate: string;
+  change: string;
+  chartData: string; // SVG path data
+  trend: 'up' | 'down';
+}
+
+export interface ActiveStaking {
+  id: number;
+  asset: string;
+  amount: string;
+  iconName: string; // Lucide icon name
+  iconColor: string; // Color of the icon
+}
+
+
+// src/dashboard/dashboard.module.ts
+import { Module } from '@nestjs/common';
+import { DashboardController } from './dashboard.controller';
+import { DashboardService } from './dashboard.service';
+
+@Module({
+  controllers: [DashboardController],
+  providers: [DashboardService],
+})
+export class DashboardModule {}
+
+// src/dashboard/dashboard.controller.ts
+import { Controller, Get } from '@nestjs/common';
+import { DashboardService } from './dashboard.service';
+import { StakingAsset, ActiveStaking } from './interfaces/dashboard.interface';
+
+@Controller('dashboard') // Base route for dashboard-related endpoints
+export class DashboardController {
+  constructor(private readonly dashboardService: DashboardService) {}
+
+  @Get('staking-assets')
+  getStakingAssets(): StakingAsset[] {
+    return this.dashboardService.getStakingAssets();
+  }
+
+  @Get('active-stakings')
+  getActiveStakings(): ActiveStaking[] {
+    return this.dashboardService.getActiveStakings();
+  }
+}
+
+// src/dashboard/dashboard.service.ts
+import { Injectable } from '@nestjs/common';
+import { StakingAsset, ActiveStaking } from './interfaces/dashboard.interface';
+
+@Injectable()
+export class DashboardService {
+  private stakingAssets: StakingAsset[] = [
+    {
+      id: 1,
+      name: 'Ethereum (ETH)',
+      iconName: 'Circle', // Lucide icon name
+      iconColor: '#627EEA',
+      rewardRate: '13.62 %',
+      change: '-2,009',
+      chartData: 'M 0 40 C 20 20, 40 60, 60 40 S 80 20, 100 40',
+      trend: 'down',
+    },
+    {
+      id: 2,
+      name: 'BNB Chain',
+      iconName: 'Hexagon',
+      iconColor: '#F3BA2F',
+      rewardRate: '12.72 %',
+      change: '+2,956',
+      chartData: 'M 0 20 C 20 40, 40 10, 60 30 S 80 50, 100 20',
+      trend: 'up',
+    },
+    {
+      id: 3,
+      name: 'Polygon (Matic)',
+      iconName: 'Triangle',
+      iconColor: '#8247E5',
+      rewardRate: '6.29 %',
+      change: '-0,987',
+      chartData: 'M 0 30 C 20 50, 40 20, 60 40 S 80 10, 100 30',
+      trend: 'down',
+    },
+  ];
+
+  private activeStakings: ActiveStaking[] = [
+    { id: 1, asset: 'Ethereum', amount: '7,699.00', iconName: 'Circle', iconColor: '#627EEA' },
+    { id: 2, asset: 'Avalanche', amount: '1,340.00', iconName: 'Triangle', iconColor: '#E84142' },
+    { id: 3, asset: 'Polygon (Matic)', amount: '540.00', iconName: 'Hexagon', iconColor: '#8247E5' },
+    { id: 4, asset: 'BNB Chain', amount: '980.00', iconName: 'Square', iconColor: '#F3BA2F' },
+  ];
+
+  getStakingAssets(): StakingAsset[] {
+    return this.stakingAssets;
+  }
+
+  getActiveStakings(): ActiveStaking[] {
+    return this.activeStakings;
+  }
+}
