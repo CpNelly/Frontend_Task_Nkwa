@@ -1,4 +1,4 @@
-#Here's a breakdown of the Crypto Staking Dashboard project in different words:
+#
 
 Project Overview
 This is a sleek, modern, and highly responsive web application designed to help users effortlessly monitor and manage their cryptocurrency staking investments. It's built to work seamlessly across various blockchain networks, giving you a centralized view of your staked digital assets.
@@ -27,7 +27,7 @@ Software Needed: Ensure you have Node.js (version 16.x or newer), npm or yarn, a
 Grab the Code: Clone the project's repository from GitHub and navigate into its directory:
 Bash
 
-git clone https://github.com/Beri28/frontend-assesstment.git .
+git clone https://github.com/CpNelly/Frontend_Task_Nkwa.git.
 cd frontend-assesment
 Install Dependencies: Fetch all the required project libraries:
 Bash
